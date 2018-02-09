@@ -1,0 +1,27 @@
+{
+  "name": "inventory-backend",
+  "version": "0.0.1",
+  "description": "Backend with database for InventoryApp for ABB IACT.",
+  "main": "index.js",
+  "scripts": {
+    "build": "babel src -d lib",
+    "dev": "node src/index.js",
+    "start": "node lib/index.js",
+    "watch": "babel src -w -d lib"
+  },
+  "author": "Emil Ahlbäck",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-plugin-transform-es2015-arrow-functions": "^6.22.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.1"
+  },
+  "dependencies": {
+    "axios": "^0.17.1",
+    "express": "^4.16.2",
+    "jsonwebtoken": "^8.1.1",
+    "mongodb": "^3.0.2",
+    "node-sp-auth": "^2.3.2"
+  }
+}
