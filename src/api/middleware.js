@@ -28,9 +28,9 @@ export function verifyToken(req, res, next) {
     try {
         let user = jwt.verify(req.header.token, tokenSecret);
         req.user = user;
-        return user;
+        next();
     } catch (err) {
-        return err;
+        res.status(400).send("BAD_TOKEN")
     }
 }
 
@@ -49,8 +49,13 @@ export function getToken(username, password) {
             axios(sharepointUrl + '/_api/web', {
                 headers,
             }).then(response => {
-                response.status == 200 ? res(jwt.sign(username, tokenSecret)) : rej(response.status);
-            });
+                console.log(response);
+                (response.status >= 200 && response.status < 300) ? res(jwt.sign(username, tokenSecret)) : rej(response);
+            }).catch(err => {
+                rej(err);
+            })
+        }).catch(err => {
+            rej(err);
         })
     })
 }
