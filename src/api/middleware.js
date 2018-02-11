@@ -2,20 +2,16 @@ import * as spauth from 'node-sp-auth';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 
+import * as db from '../db';
+import { atob } from '../utils';
+
 const { sharepointUrl, tokenSecret } = require('../../config.json');
 
 // function make_base_auth(user, password) {
 //     var tok = user + ':' + password;
 //     var hash = Base64.encode(tok);
-//     return "Basic " + hash;
+//     return 'Basic " + hash;
 // }
-
-function btoa(str) {
-    return Buffer(str, 'binary').toString('base64');
-}
-function atob(str) {
-    return new Buffer(str, 'base64').toString('binary')
-}
 
 export function basicToCredentials(basicAuthString) {
     let base64String = basicAuthString.replace('Basic ', '');
@@ -25,12 +21,13 @@ export function basicToCredentials(basicAuthString) {
 }
 
 export function verifyToken(req, res, next) {
+    if (!req.headers.token) res.status(401).send('TOKEN REQUIRED');
     try {
-        let user = jwt.verify(req.header.token, tokenSecret);
+        let user = jwt.verify(req.headers.token, tokenSecret);
         req.user = user;
         next();
     } catch (err) {
-        res.status(400).send("BAD_TOKEN")
+        res.status(400).send('BAD TOKEN');
     }
 }
 
@@ -39,22 +36,31 @@ export function getToken(username, password) {
         if (typeof username != 'string' || typeof password != 'string')
             rej('Username and password needed');
 
-        spauth.getAuth('https://abb.sharepoint.com/sites/CombiX/LabInventory/', {
+        // spauth.getAuth() returns a cookie, which can then be used to auth further requests.
+        spauth.getAuth(sharepointUrl, {
             username,
             password,
         }).then(options => {
-            let headers = options.headers;
-            headers['Accept'] = 'application/json;odata=verbose';
+            // Auth successful
 
-            axios(sharepointUrl + '/_api/web', {
-                headers,
-            }).then(response => {
-                console.log(response);
-                (response.status >= 200 && response.status < 300) ? res(jwt.sign(username, tokenSecret)) : rej(response);
-            }).catch(err => {
-                rej(err);
-            })
+            db.collection('users')
+                .findOne({ email: username })
+                .then(user => {
+                    if (user) {
+                        res(jwt.sign(username, tokenSecret));
+                    } else {
+                        db.collection('users')
+                            .insertOne({ email: username, lastActive: new Date(), registered: new Date(), cookie: options.headers.Cookie })
+                            .then(te => {
+                                res(jwt.sign(username, tokenSecret));
+                            });
+                    }
+                });
+
         }).catch(err => {
+            // Auth failed
+            console.log(err)
+
             rej(err);
         })
     })

@@ -7,7 +7,8 @@
     "build": "babel src -d lib",
     "dev": "node src/index.js",
     "start": "node lib/index.js",
-    "watch": "babel src -w -d lib"
+    "watch-build": "babel src -w -d lib",
+    "watch-run": "nodemon -w lib lib"
   },
   "author": "Emil Ahlbäck",
   "license": "ISC",
@@ -19,9 +20,11 @@
   },
   "dependencies": {
     "axios": "^0.17.1",
+    "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "jsonwebtoken": "^8.1.1",
+    "lodash": "^4.17.5",
     "mongodb": "^3.0.2",
-    "node-sp-auth": "^2.3.2"
+    "node-sp-auth": "^2.3.4"
   }
 }
