@@ -1,31 +1,27 @@
 import express from 'express';
 
-import { connect as dbConnect } from './db';
 import initApi from './api';
 import { port } from '../config.json';
 import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
+import morgan from 'morgan';
+
+import { dbName } from '../config.json';
 
 /* DATABASE */
 
-const url = 'mongodb://localhost:27017';
-const dbName = 'inventory-abb';
+const mongoUrl = 'mongodb://localhost:27017';
 
 function loop() {
-	let expressPromise = new Promise((res, rej) => {
-		const app = express();
-		app.use(bodyParser.json())
-		initApi(app);
-		res(app);
-	});
+	const app = express();
+	app.use(bodyParser.json())
+	app.use(morgan('tiny'));
+	initApi(app);
 
-	let mongoPromise = dbConnect(url);
-
-	Promise
-		.all([expressPromise, mongoPromise])
-		.then(([app, db]) => {
+	mongoose.connect(`${mongoUrl}/${dbName}`)
+		.then(() => {
 			app.listen(port, () => console.log('OPEN at port', port));
 		})
-		.catch(console.error);
 }
 
 loop();

@@ -1,17 +1,16 @@
 import { Router } from 'express';
-import { verifyToken } from './middleware';
+import { verifyToken } from '../middleware';
 
-import * as db from '../db';
+import { User } from '../models';
 
 let router = new Router();
 
 router
 	.use(verifyToken) // Require user to send a valid token in order to proceed
 	.get('/', (req, res) => {
-		let users = db.get()
-			.collection('users')
+		let users = User
 			.find()
-			.toArray()
+			.exec()
 			.then(users => {
 				res.json(users);
 			});

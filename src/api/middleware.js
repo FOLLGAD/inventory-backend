@@ -2,7 +2,6 @@ import * as spauth from 'node-sp-auth';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 
-import * as db from '../db';
 import { atob } from '../utils';
 
 const { sharepointUrl, tokenSecret } = require('../../config.json');
@@ -42,6 +41,17 @@ export function getToken(username, password) {
             password,
         }).then(options => {
             // Auth successful
+
+            // let headers = options.headers;
+            // headers['Accept'] = 'application/json;odata=verbose';
+
+            // let url = apiUrl + '_api/SP.UserProfiles.PeopleManager/GetMyProperties';
+
+            // axios.get(url, {
+            //     headers,
+            // }).then(response => {
+            //     console.log(response);
+            // })
 
             db.collection('users')
                 .findOne({ email: username })

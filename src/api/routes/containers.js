@@ -1,24 +1,22 @@
 import { Router } from 'express';
-import { verifyToken } from './middleware';
+import { verifyToken } from '../middleware';
 
-import * as db from '../db';
+import { Container } from '../models';
 
 let router = new Router();
 
 router
 	.use(verifyToken) // Require user to send a valid token in order to proceed
 	.get('/', (req, res) => {
-		let containers = db.get()
-			.collection('containers')
+		let containers = Container
 			.find()
-			.toArray()
+			.exec()
 			.then(containers => {
 				res.json(containers);
 			});
 	})
 	.post('/', (req, res) => {
-		let container = db.get()
-			.collection('containers')
+		let container = Container
 			.insertOne(req.body)
 			.then(d => {
 				let container = d.ops[0]; // Returns the newly inserted document
