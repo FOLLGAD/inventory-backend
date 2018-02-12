@@ -2,65 +2,62 @@ import * as spauth from 'node-sp-auth';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 
-import { atob } from '../utils';
+import { User } from './models';
 
 const { sharepointUrl, tokenSecret } = require('../../config.json');
 
-// function make_base_auth(user, password) {
-//     var tok = user + ':' + password;
-//     var hash = Base64.encode(tok);
-//     return 'Basic " + hash;
-// }
-
-export function basicToCredentials(basicAuthString) {
-    let base64String = basicAuthString.replace('Basic ', '');
-    let decoded = atob(base64String);
-    let [username, password] = decoded.split(':');
-    return { username, password };
-}
-
+/*
+    Checks the validity of the token in the "token" header, and sets the req.user property to the users' database entry.
+*/
 export function verifyToken(req, res, next) {
-    if (!req.headers.token) res.status(401).send('TOKEN REQUIRED');
+    if (!req.headers.token) {
+        res.status(401).send('TOKEN REQUIRED');
+        return;
+    }
+
     try {
-        let user = jwt.verify(req.headers.token, tokenSecret);
-        req.user = user;
-        next();
+        let email = jwt.verify(req.headers.token, tokenSecret);
+
+        User
+            .findOneAndUpdate({ email: email }, { lastActive: new Date() }, { upsert: true }, (err, user) => {
+                if (user && !err) {
+                    req.user = user; // Set the req.user to the user object for easy access in the rest of the API
+                    next();
+                } else {
+                    throw new Error('USER NOT FOUND');
+                }
+            })
     } catch (err) {
         res.status(400).send('BAD TOKEN');
     }
 }
 
+/*
+    Takes username and password and returns a JWT token to be sent in the "token" header in subsequent requests.
+*/
 export function getToken(username, password) {
     return new Promise((res, rej) => {
-        if (typeof username != 'string' || typeof password != 'string')
+        if (typeof username != 'string' || typeof password != 'string') {
             rej('Username and password needed');
-
-        // spauth.getAuth() returns a cookie, which can then be used to auth further requests.
+            return;
+        }
+        // spauth.getAuth() returns a cookie, which can then be used to auth further Sharepoint-requests.
         spauth.getAuth(sharepointUrl, {
             username,
             password,
         }).then(options => {
             // Auth successful
-
-            // let headers = options.headers;
-            // headers['Accept'] = 'application/json;odata=verbose';
-
-            // let url = apiUrl + '_api/SP.UserProfiles.PeopleManager/GetMyProperties';
-
-            // axios.get(url, {
-            //     headers,
-            // }).then(response => {
-            //     console.log(response);
-            // })
-
-            db.collection('users')
+            User
                 .findOne({ email: username })
+                .exec()
                 .then(user => {
                     if (user) {
+                        // If user already exists in database, just resolve the token without further actions
                         res(jwt.sign(username, tokenSecret));
                     } else {
+                        // If user exists in database, register the email.
                         db.collection('users')
-                            .insertOne({ email: username, lastActive: new Date(), registered: new Date(), cookie: options.headers.Cookie })
+                            .insertOne({ email: username, lastActive: new Date(), registered: new Date() })
                             .then(te => {
                                 res(jwt.sign(username, tokenSecret));
                             });
@@ -69,8 +66,6 @@ export function getToken(username, password) {
 
         }).catch(err => {
             // Auth failed
-            console.log(err)
-
             rej(err);
         })
     })

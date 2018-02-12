@@ -1,26 +1,18 @@
 import mongoose, { Schema } from 'mongoose';
 
-// function stringToType(string) {
-// 	if (string == 'Number') return Number;
-// 	if (string == 'String') return String;
-// 	if (string == 'Date') return Date;
-// 	if (string == 'Boolean') return Boolean;
-// 	// if (/^\/.*\/\w*$/.test(string)) return new RegExp(string);
-// }
+import { ObjectTypes } from '../utils';
 
-const ObjectTypes = {
-	'Number': Number,
-	'String': String,
-	'Date': Date,
-	'Boolean': Boolean,
-}
-
+/* 
+	Container
+ */
 const containerSchema = new Schema({
 	name: String,
 });
 export const Container = mongoose.model('container', containerSchema);
 
-
+/* 
+	PropertyType
+ */
 const propertyTypeSchema = new Schema({
 	name: String,
 	type: {
@@ -35,19 +27,26 @@ const propertyTypeSchema = new Schema({
 	});
 
 
+/* 
+	ItemType
+ */
 const itemTypeSchema = new Schema({
 	name: { type: String, required: true },
 	properties: [propertyTypeSchema],
 });
 export const ItemType = mongoose.model('item-type', itemTypeSchema);
 
-
+/* 
+	Property
+ */
 const propertySchema = new Schema({
 	type: { type: propertyTypeSchema, required: true },
 	value: Schema.Types.Mixed,
 });
 
-
+/* 
+	Item
+ */
 const itemSchema = new Schema({
 	container: { type: Schema.Types.ObjectId, ref: 'container' },
 	itemType: { type: Schema.Types.ObjectId, ref: 'property-type' },
@@ -57,8 +56,16 @@ const itemSchema = new Schema({
 });
 export const Item = mongoose.model('item', itemSchema);
 
-
+/* 
+	User
+ */
 const userSchema = new Schema({
 	email: { type: String, unique: true, required: true },
-});
+	lastActive: { type: Date, default: () => new Date() },
+}, {
+		timestamps: {
+			updatedAt: 'updatedAt',
+			createdAt: 'registered',
+		}
+	});
 export const User = mongoose.model('user', userSchema);
