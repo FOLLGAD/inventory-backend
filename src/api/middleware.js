@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import { User } from './models';
 
-const { sharepointUrl, tokenSecret } = require('../../config.json');
+import { sharepointUrl, tokenSecret } from '../consts';
 
 /*
     Checks the validity of the token in the "token" header, and sets the req.user property to the users' database entry.

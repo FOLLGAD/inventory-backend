@@ -1,6 +1,0 @@
-{
-    "sharepointUrl": "https://abb.sharepoint.com/sites/CombiX/LabInventory",
-    "port": 3000,
-    "tokenSecret": "bobs&vagene",
-    "dbName": "inventory"
-}
