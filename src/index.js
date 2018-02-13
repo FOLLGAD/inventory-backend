@@ -1,3 +1,4 @@
+require('dotenv').config()
 import express from 'express';
 
 import initApi from './api';
@@ -10,8 +11,8 @@ import { dbName } from '../config.json';
 
 /* DATABASE */
 
-const mongoUrl = 'mongodb://localhost:27017';
-
+const mongoUrl = process.env.DB_HOST || 'mongodb://localhost:27017';
+const portToUse = process.env.PORT || port;
 function loop() {
 	const app = express();
 	app.use(bodyParser.json())
@@ -20,7 +21,7 @@ function loop() {
 
 	mongoose.connect(`${mongoUrl}/${dbName}`)
 		.then(() => {
-			app.listen(port, () => console.log('OPEN at port', port));
+			app.listen(portToUse, () => console.log('OPEN at port', portToUse));
 		})
 }
 
