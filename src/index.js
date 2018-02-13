@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config({path: __dirname + '/../.env'});
 
 import express from 'express';
 import bodyParser from 'body-parser';
