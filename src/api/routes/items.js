@@ -14,6 +14,14 @@ router
                 res.json(items);
             });
     })
+    .get('/:id', (req, res) => {
+        Item
+            .findById(req.params.id)
+            .exec()
+            .then(item => {
+                res.json(item);
+            });
+    })
     .post('/', (req, res) => {
         let item = Item
             .create(req.body, (err, item) => {

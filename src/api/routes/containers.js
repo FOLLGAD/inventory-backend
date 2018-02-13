@@ -8,19 +8,25 @@ let router = new Router();
 router
 	.use(verifyToken) // Require user to send a valid token in order to proceed
 	.get('/', (req, res) => {
-		let containers = Container
+		Container
 			.find()
 			.exec()
 			.then(containers => {
 				res.json(containers);
 			});
 	})
+	.get('/:id', (req, res) => {
+		Container
+			.findById(req.params.id)
+			.exec()
+			.then(container => {
+				res.json(container);
+			});
+	})
 	.post('/', (req, res) => {
-		let container = Container
-			.insertOne(req.body)
-			.then(d => {
-				let container = d.ops[0]; // Returns the newly inserted document
-
+		Container
+			.create(req.body)
+			.then(container => {
 				res.json(container);
 			})
 			.catch(err => {

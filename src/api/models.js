@@ -56,16 +56,36 @@ const itemSchema = new Schema({
 });
 export const Item = mongoose.model('item', itemSchema);
 
+
+
 /* 
 	User
  */
+const nameSchema = new Schema({
+	first: String,
+	last: String,
+});
 const userSchema = new Schema({
 	email: { type: String, unique: true, required: true },
+	name: nameSchema,
 	lastActive: { type: Date, default: () => new Date() },
+	phone: String,
 }, {
 		timestamps: {
 			updatedAt: 'updatedAt',
 			createdAt: 'registered',
+		},
+		toJSON: {
+			virtuals: true,
+		},
+		toObject: {
+			virtuals: true,
 		}
 	});
+
+let fullNameVirtual = userSchema.virtual('fullName');
+fullNameVirtual.get(function () {
+	return `${this.name.first} ${this.name.last}`;
+});
+
 export const User = mongoose.model('user', userSchema);

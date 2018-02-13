@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getToken, basicToCredentials } from '../middleware';
+import { getToken } from '../middleware';
 import { basicToCredentials } from '../../utils';
 
 let router = new Router();
