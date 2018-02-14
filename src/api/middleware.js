@@ -56,8 +56,8 @@ export function getToken(username, password) {
                         res(jwt.sign(username, tokenSecret));
                     } else {
                         // If user exists in database, register the email.
-                        db.collection('users')
-                            .insertOne({ email: username, lastActive: new Date(), registered: new Date() })
+                        User
+                            .create({ email: username, lastActive: new Date() })
                             .then(te => {
                                 res(jwt.sign(username, tokenSecret));
                             });

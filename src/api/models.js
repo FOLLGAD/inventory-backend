@@ -21,10 +21,8 @@ const propertyTypeSchema = new Schema({
 			return type in ObjectTypes;
 		}
 	},
-}, {
-		_id: false,
-		id: false,
-	});
+});
+export const PropertyType = mongoose.model('property-type', propertyTypeSchema);
 
 
 /* 
@@ -32,7 +30,7 @@ const propertyTypeSchema = new Schema({
  */
 const itemTypeSchema = new Schema({
 	name: { type: String, required: true },
-	properties: [propertyTypeSchema],
+	propertyTypes: [propertyTypeSchema],
 });
 export const ItemType = mongoose.model('item-type', itemTypeSchema);
 
@@ -40,9 +38,11 @@ export const ItemType = mongoose.model('item-type', itemTypeSchema);
 	Property
  */
 const propertySchema = new Schema({
-	type: { type: propertyTypeSchema, required: true },
+	propertyType: { type: Schema.Types.ObjectId, required: true, ref: 'property-type' },
 	value: Schema.Types.Mixed,
-});
+}, {
+		_id: false,
+	});
 
 /* 
 	Item
