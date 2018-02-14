@@ -7,9 +7,9 @@ import users from './routes/users';
 import itemTypes from './routes/item-types';
 
 export default app => {
-    app.use('/api/v1/auth', auth);
-    app.use('/api/v1/items', items);
-    app.use('/api/v1/users', users);
-    app.use('/api/v1/containers', containers);
-    app.use('/api/v1/item-types', itemTypes);
+    app.use('/v1/auth', auth);
+    app.use('/v1/items', items);
+    app.use('/v1/users', users);
+    app.use('/v1/containers', containers);
+    app.use('/v1/item-types', itemTypes);
 }

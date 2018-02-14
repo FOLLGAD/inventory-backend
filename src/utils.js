@@ -22,7 +22,7 @@ export function atob(str) {
 }
 
 // Acceptable ObjectTypes with names
-const ObjectTypes = {
+export const ObjectTypes = {
 	'Number': Number,
 	'String': String,
 	'Date': Date,
