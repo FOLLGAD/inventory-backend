@@ -8,7 +8,7 @@ let router = new Router();
 router
 	.use(verifyToken) // Require user to send a valid token in order to proceed
 	.get('/', (req, res) => {
-		let users = User
+		User
 			.find()
 			.exec()
 			.then(users => {

@@ -47,25 +47,67 @@ const propertySchema = new Schema({
 /* 
 	Item
  */
+const borrowInterval = new Schema({
+	from: Date,
+	to: Date,
+	user: { type: Schema.Types.ObjectId, ref: 'user' },
+});
 const itemSchema = new Schema({
 	container: { type: Schema.Types.ObjectId, ref: 'container' },
-	itemType: { type: Schema.Types.ObjectId, ref: 'property-type' },
+	itemType: { type: Schema.Types.ObjectId, ref: 'item-type' },
+	borrows: [borrowInterval],
 	properties: {
 		type: [propertySchema],
 	},
+}, {
+	timestamps: true,
+	toJSON: {
+		virtuals: true,
+	},
+	toObject: {
+		// virtuals: true,
+	}
+});
+let itemVirtuals = itemSchema.virtual('currentBorrow');
+itemVirtuals.get(function () {
+	let now = new Date();
+	return this.borrows.find(d => (d.to > now && d.from < now) ? true : false);
 });
 export const Item = mongoose.model('item', itemSchema);
+
 
 /* 
 	User
  */
+const nameSchema = new Schema({
+	first: String,
+	last: String,
+});
 const userSchema = new Schema({
 	email: { type: String, unique: true, required: true },
+	name: nameSchema,
 	lastActive: { type: Date, default: () => new Date() },
+	phone: String,
 }, {
 		timestamps: {
 			updatedAt: 'updatedAt',
 			createdAt: 'registered',
+		},
+		toJSON: {
+			virtuals: true,
+		},
+		toObject: {
+			virtuals: true,
 		}
 	});
+
+let fullNameVirtual = userSchema.virtual('fullName');
+fullNameVirtual.get(function () {
+	if (this.name && this.name.first && this.name.last) {
+		return `${this.name.first} ${this.name.last}`;
+	} else {
+		return this.name ? this.name.first || this.name.last : null;
+	}
+});
+
 export const User = mongoose.model('user', userSchema);
