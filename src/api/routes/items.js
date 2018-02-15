@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { verifyToken } from '../middleware';
-
 import { Item, ItemType } from '../models';
 
 let router = new Router();
@@ -35,7 +34,7 @@ router
                 }
                 res.json(items);
             })
-            .catch(d => res.status(500));
+            .catch(d => res.sendStatus(500));
     })
     .get('/:id', (req, res) => {
         let dbQuery = Item
@@ -66,9 +65,57 @@ router
                 }
                 res.json(item);
             })
-            .catch(d => res.status(500));
+            .catch(d => res.sendStatus(500));
     })
-    .get('/:id/borrow', (req, res) => {
+    .post('/:id/borrow', (req, res) => {
+        Item
+            .findById(req.params.id)
+            .exec()
+            .then(item => {
+                let timestamp = Date.parse(req.body.to);
+                if (isNaN(timestamp)) { // Check whether req.body.to is a valid date or not
+                    res.status(400).send('Invalid "to" date');
+                    return;
+                }
+
+                let toDate = new Date(timestamp),
+                    now = new Date();
+
+                if (toDate < now) {
+                    res.status(400).send('ToDate can not be in the past');
+                    return;
+                }
+
+                let isBorrowed = item.borrows.some(b => !b.returned && b.to > now && b.from < now);
+
+                if (!isBorrowed) {
+                    Item
+                        .findByIdAndUpdate(req.params.id, { $push: { borrows: { to: toDate, from: now, user: req.user } } }, (err, docs) => {
+                            if (err || !docs) return res.sendStatus(500);
+                            res.sendStatus(200);
+                        });
+                } else {
+                    res.status(400).send('Item is already borrowed');
+                }
+            })
+            .catch(d => {
+                console.log(d)
+                res.sendStatus(500)
+            });
+    })
+    .get('/:id/return', (req, res) => {
+        let now = new Date();
+        Item
+            .findByIdAndUpdate(req.params.id,
+                { $set: { 'borrows.$[currentborrower].returned': now } },
+                { arrayFilters: [{ 'currentborrower.returned': null, 'currentborrower.user': req.user._id }] },
+                (err, docs) => {
+                    console.log(err)
+                    if (err || !docs) return res.sendStatus(500);
+                    res.send(200);
+                });
+    })
+    .get('/:id/return', (req, res) => {
         Item
             .findById(req.params.id)
             .exec()
@@ -76,7 +123,7 @@ router
                 res.json(item);
                 console.log(item);
             })
-            .catch(d => res.status(500));
+            .catch(d => res.sendStatus(500));
     })
     .post('/', (req, res) => {
         Item
@@ -90,7 +137,7 @@ router
                 if (item) {
                     res.json(item);
                 } else {
-                    res.send(404);
+                    res.sendStatus(404);
                 }
             })
     })

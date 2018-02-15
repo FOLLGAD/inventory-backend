@@ -48,8 +48,9 @@ const propertySchema = new Schema({
 	Item
  */
 const borrowInterval = new Schema({
-	from: Date,
-	to: Date,
+	from: { type: Date, required: true, default: () => (new Date()) },
+	to: { type: Date, required: true },
+	returned: Date,
 	user: { type: Schema.Types.ObjectId, ref: 'user' },
 });
 const itemSchema = new Schema({
@@ -60,19 +61,14 @@ const itemSchema = new Schema({
 		type: [propertySchema],
 	},
 }, {
-	timestamps: true,
-	toJSON: {
-		virtuals: true,
-	},
-	toObject: {
-		// virtuals: true,
-	}
-});
-let itemVirtuals = itemSchema.virtual('currentBorrow');
-itemVirtuals.get(function () {
-	let now = new Date();
-	return this.borrows.find(d => (d.to > now && d.from < now) ? true : false);
-});
+		timestamps: true,
+		toJSON: {
+			virtuals: true,
+		},
+		toObject: {
+			virtuals: true,
+		}
+	});
 export const Item = mongoose.model('item', itemSchema);
 
 

@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { verifyToken } from '../middleware';
-
 import { ItemType } from '../models';
 
 let errorHandle = (req, res, cb) => (err, doc) => err ? res.send(500) : (doc ? cb(doc) : res.send(404));

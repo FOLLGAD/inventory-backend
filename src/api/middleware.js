@@ -1,9 +1,7 @@
 import * as spauth from 'node-sp-auth';
 import jwt from 'jsonwebtoken';
-import axios from 'axios';
 
 import { User } from './models';
-
 import { sharepointUrl, tokenSecret } from '../consts';
 
 /*

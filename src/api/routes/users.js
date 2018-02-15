@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { verifyToken } from '../middleware';
-
 import { User } from '../models';
 
 let router = new Router();
