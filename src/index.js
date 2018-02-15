@@ -12,6 +12,10 @@ let mongoUrl = process.env.DB_HOST,
 	dbName = process.env.DB_NAME,
 	port = process.env.PORT;
 
+if (!mongoUrl) console.error("You need a DB_HOST entry in .env")
+if (!dbName) console.error("You need a DB_NAME entry in .env")
+if (!port) console.error("You need a PORT entry in .env")
+
 function loop() {
 	const app = express();
 
