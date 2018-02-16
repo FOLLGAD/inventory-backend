@@ -26,14 +26,15 @@ router
 	.post('/', (req, res) => {
 		ItemType
 			.create(req.body, (err, itemType) => {
-				if (err) return res.send(500);
+				console.log(err);
+				if (err) return res.sendStatus(500);
 				res.json(itemType);
 			});
 	})
 	.delete('/:id', (req, res) => {
 		ItemType
 			.findByIdAndRemove(req.params.id, (err, itemType) => {
-				if (err || !itemType) return res.send(404);
+				if (err || !itemType) return res.sendStatus(404);
 				res.json(itemType);
 			});
 	})

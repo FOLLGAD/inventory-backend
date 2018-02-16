@@ -107,11 +107,14 @@ router
         let now = new Date();
         Item
             .findByIdAndUpdate(req.params.id,
+
+                // Finds array where "returned" property equals null, and where "user" property is the user id,
+                // then sets the "returned" field to the current date
                 { $set: { 'borrows.$[currentborrower].returned': now } },
                 { arrayFilters: [{ 'currentborrower.returned': null, 'currentborrower.user': req.user._id }] },
+
                 (err, docs) => {
-                    console.log(err)
-                    if (err || !docs) return res.sendStatus(500);
+                    if (err || !docs) return (console.log(err), res.sendStatus(500));
                     res.send(200);
                 });
     })
@@ -128,8 +131,9 @@ router
     .post('/', (req, res) => {
         Item
             .create(req.body, (err, item) => {
+                if (err) return res.status(400).send(err);
                 res.json(item);
-            })
+            });
     })
     .delete('/:id', (req, res) => {
         Item

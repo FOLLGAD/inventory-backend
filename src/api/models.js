@@ -22,7 +22,6 @@ const propertyTypeSchema = new Schema({
 		}
 	},
 });
-export const PropertyType = mongoose.model('property-type', propertyTypeSchema);
 
 
 /* 
@@ -34,15 +33,6 @@ const itemTypeSchema = new Schema({
 });
 export const ItemType = mongoose.model('item-type', itemTypeSchema);
 
-/* 
-	Property
- */
-const propertySchema = new Schema({
-	propertyType: { type: Schema.Types.ObjectId, required: true, ref: 'property-type' },
-	value: Schema.Types.Mixed,
-}, {
-		_id: false,
-	});
 
 /* 
 	Item
@@ -53,6 +43,12 @@ const borrowInterval = new Schema({
 	returned: Date,
 	user: { type: Schema.Types.ObjectId, ref: 'user' },
 });
+const propertySchema = new Schema({
+	propertyType: { type: Schema.Types.ObjectId, required: true },
+	value: Schema.Types.Mixed,
+}, {
+		_id: false,
+	});
 const itemSchema = new Schema({
 	container: { type: Schema.Types.ObjectId, ref: 'container' },
 	itemType: { type: Schema.Types.ObjectId, ref: 'item-type' },
