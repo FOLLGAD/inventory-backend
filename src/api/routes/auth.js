@@ -23,7 +23,7 @@ router
         getToken(username, password).then(token => {
             res.status(200).json({ token });
         }).catch(err => {
-            res.status(err.status || 400).json({ errors: [err] });
+            res.status(400).send("Wrong credentials or failed to connect to auth service");
         });
     })
 
