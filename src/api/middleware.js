@@ -8,6 +8,7 @@ import { sharepointUrl, tokenSecret } from '../consts';
     Checks the validity of the token in the "token" header, and sets the req.user property to the users' database entry.
 */
 export function verifyToken(req, res, next) {
+    console.log("req.headers", req.headers)
     if (!req.headers.token) {
         res.status(401).send('TOKEN REQUIRED');
         return;

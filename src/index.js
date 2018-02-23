@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
 import initApi from './api';
+import cors from 'cors';
 
 /* DATABASE */
 
@@ -19,9 +20,9 @@ if (!port) console.error("You need a PORT entry in .env")
 function loop() {
 	const app = express();
 
+	app.use(cors());
 	app.use(bodyParser.json()); // Parse the body as JSON
 	app.use(morgan('tiny')); // Initialize logger
-
 	initApi(app);
 
 	mongoose.connect(`${mongoUrl}/${dbName}`)

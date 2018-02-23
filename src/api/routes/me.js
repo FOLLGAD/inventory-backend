@@ -12,6 +12,9 @@ router
 			.exec()
 			.then(user => {
 				res.json(user);
+			})
+			.catch(err => {
+				res.json(err)
 			});
 	})
 	.post('/', (req, res) => {
