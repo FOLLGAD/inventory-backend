@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { verifyToken } from '../middleware';
-import { Item, ItemType } from '../models';
+import { Item, ItemType, Borrow } from '../models';
 
 let router = new Router();
 router
@@ -68,7 +68,24 @@ router
             .catch(d => res.sendStatus(500));
     })
     .post('/:id/borrow', (req, res) => {
-        Item
+        let isBorrowedQuery = Borrow
+            .findOne({
+                item: req.params.id,
+                returned: { $exists: false },
+                to: { $lte: now },
+            })
+            .exec()
+            .then(item => {
+                if (!item) {
+                    res.status(400).send('Item is already borrowed');
+                } else {
+                    return false;
+                }
+            })
+            .catch(error => {
+                res.status(400).send('Item is already borrowed');
+            })
+        let itemExistsQuery = Item
             .findById(req.params.id)
             .exec()
             .then(item => {
@@ -87,6 +104,7 @@ router
                 }
 
                 let isBorrowed = item.borrows.some(b => !b.returned && b.to > now && b.from < now);
+
 
                 if (!isBorrowed) {
                     Item
