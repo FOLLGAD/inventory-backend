@@ -34,7 +34,7 @@ router
                 }
                 res.json(items);
             })
-            .catch(d => res.sendStatus(500));
+            .catch(d => (res.sendStatus(500), console.error(d)));
     })
     .get('/:id', (req, res) => {
         let dbQuery = Item
