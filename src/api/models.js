@@ -37,12 +37,6 @@ export const ItemType = mongoose.model('item-type', itemTypeSchema);
 /* 
 	Item
  */
-const borrowInterval = new Schema({
-	from: { type: Date, required: true, default: () => (new Date()) },
-	to: { type: Date, required: true },
-	returned: Date,
-	user: { type: Schema.Types.ObjectId, ref: 'user' },
-});
 const propertySchema = new Schema({
 	propertyType: { type: Schema.Types.ObjectId, required: true },
 	value: Schema.Types.Mixed,
@@ -52,7 +46,6 @@ const propertySchema = new Schema({
 const itemSchema = new Schema({
 	container: { type: Schema.Types.ObjectId, ref: 'container' },
 	itemType: { type: Schema.Types.ObjectId, ref: 'item-type' },
-	borrows: [borrowInterval],
 	properties: {
 		type: [propertySchema],
 	},
@@ -66,6 +59,19 @@ const itemSchema = new Schema({
 		}
 	});
 export const Item = mongoose.model('item', itemSchema);
+
+
+/*
+	Borrow
+ */
+const borrowSchema = new Schema({
+	from: { type: Date, required: true, default: () => (new Date()) },
+	to: { type: Date, required: true },
+	returned: Date,
+	user: { type: Schema.Types.ObjectId, required: true, ref: 'user' },
+	item: { type: Schema.Types.ObjectId, required: true, ref: 'item' },
+});
+export const Borrow = mongoose.model('borrow', borrowSchema);
 
 
 /* 

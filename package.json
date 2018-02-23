@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build-prod": "babel src -d lib",
-    "dev": "start npm run build-dev && npm run start-dev",
+    "dev": "npm run build-dev | npm run start-dev",
     "start": "npm run start-prod",
     "start-prod": "node lib/index.js",
     "build-dev": "babel src -w -d lib",
