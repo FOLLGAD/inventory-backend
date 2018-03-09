@@ -22,7 +22,10 @@ router
                     let toJson = items.map(d => d.toJSON());
                     return res.json(toJson.map(item => {
                         item.name = item.itemType.name;
-                        let typeProps = item.itemType.properties;
+
+                        if (!item.itemType) return;
+
+                        let typeProps = item.itemType.propertyTypes;
 
                         item.properties = item.properties.map(prop => {
                             let newType = typeProps.find(p => p._id.equals(prop.type));
