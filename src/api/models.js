@@ -44,6 +44,7 @@ const propertySchema = new Schema({
 		_id: false,
 	});
 const itemSchema = new Schema({
+	code: { type: String, required: true },
 	container: { type: Schema.Types.ObjectId, ref: 'container' },
 	itemType: { type: Schema.Types.ObjectId, ref: 'item-type' },
 	properties: {

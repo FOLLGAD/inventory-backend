@@ -150,6 +150,7 @@ router
             .catch(d => res.sendStatus(500));
     })
     .post('/', (req, res) => {
+        if (!req.body.code) req.body.code = Math.random().toString() //Remove later plox
         Item
             .create(req.body, (err, item) => {
                 if (err) return res.status(400).send(err);
