@@ -28,9 +28,9 @@ router
                         let typeProps = item.itemType.propertyTypes;
 
                         item.properties = item.properties.map(prop => {
-                            let newType = typeProps.find(p => p._id.equals(prop.type));
-                            prop.type = newType;
-                            return prop
+                            let newType = typeProps.find(p => p._id.equals(prop.propertyType));
+                            prop.propertyType = newType;
+                            return prop;
                         });
                         return item;
                     }))
