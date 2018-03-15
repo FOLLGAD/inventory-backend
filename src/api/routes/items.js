@@ -21,12 +21,8 @@ router
                 if (req.query.populate != undefined) {
                     let toJson = items.map(d => d.toJSON());
                     return res.json(toJson.map(item => {
-                        item.name = item.itemType.name;
-
                         if (!item.itemType) return;
-
                         let typeProps = item.itemType.propertyTypes;
-
                         item.properties = item.properties.map(prop => {
                             let newType = typeProps.find(p => p._id.equals(prop.type));
                             prop.type = newType;
@@ -150,7 +146,7 @@ router
             .catch(d => res.sendStatus(500));
     })
     .post('/', (req, res) => {
-        if (!req.body.code) req.body.code = Math.random().toString() //Remove later plox
+        if (!req.body.code) req.body.code = (Math.random()*10000000000).toFixed(0).toString() //Remove later plox
         Item
             .create(req.body, (err, item) => {
                 if (err) return res.status(400).send(err);
