@@ -24,7 +24,7 @@ function loop() {
 	app.use(bodyParser.json()); // Parse the body as JSON
 	app.use(morgan('tiny')); // Initialize logger
 	initApi(app);
-
+	//Conect to the db
 	mongoose.connect(`${mongoUrl}/${dbName}`)
 		.then(() => {
 			app.listen(port, () => console.log('OPEN at port', port));
