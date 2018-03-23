@@ -66,23 +66,47 @@ router
             })
             .catch(d => res.sendStatus(500));
     })
-    .post('/:id/borrow', (req, res) => {
+    .get('/:id/is-borrowed', (req, res) => {
+        let now = Date.now()
         let isBorrowedQuery = Borrow
             .findOne({
                 item: req.params.id,
-                returned: { $exists: false },
-                to: { $lte: now },
+                returned: { $exists: true },
+                to: { $gte: now },
+                from: { $lte: now },
+            })
+            .populate('user')
+            .exec()
+            .then(borrow => {
+                if (borrow) {
+                    res.status(200).json(borrow);
+                } else {
+                    res.status(204).json()
+                }
+            })
+            .catch(error => {
+                res.status(500).send();
+            })
+    })
+    .post('/:id/borrow', (req, res) => {
+        let now = Date.now()
+        let isBorrowedQuery = Borrow
+            .findOne({
+                item: req.params.id,
+                returned: { $exists: true },
+                to: { $gte: now },
+                from: { $lte: now },
             })
             .exec()
             .then(item => {
-                if (!item) {
-                    res.status(400).send('Item is already borrowed');
+                if (item) {
+                    res.status(400).send('Item is already borrowed1');
                 } else {
                     return false;
                 }
             })
             .catch(error => {
-                res.status(400).send('Item is already borrowed');
+                res.status(500).json(error);
             })
         let itemExistsQuery = Item
             .findById(req.params.id)
@@ -102,8 +126,7 @@ router
                     return;
                 }
 
-                let isBorrowed = item.borrows.some(b => !b.returned && b.to > now && b.from < now);
-
+                let isBorrowed = item.borrows && item.borrows.some && item.borrows.some(b => !b.returned && b.to > now && b.from < now);
 
                 if (!isBorrowed) {
                     Item
@@ -112,7 +135,7 @@ router
                             res.sendStatus(200);
                         });
                 } else {
-                    res.status(400).send('Item is already borrowed');
+                    res.status(400).send('Item is already borrowed3');
                 }
             })
             .catch(d => {
@@ -135,18 +158,9 @@ router
                     res.send(200);
                 });
     })
-    .get('/:id/return', (req, res) => {
-        Item
-            .findById(req.params.id)
-            .exec()
-            .then(item => {
-                res.json(item);
-                console.log(item);
-            })
-            .catch(d => res.sendStatus(500));
-    })
     .post('/', (req, res) => {
-        if (!req.body.code) req.body.code = (Math.random()*10000000000).toFixed(0).toString() //Remove later plox
+        console.log(req.body)
+        if (!req.body.code) req.body.code = (Math.random() * 10000000000).toFixed(0).toString() //Remove later plox
         Item
             .create(req.body, (err, item) => {
                 if (err) return res.status(400).send(err);
