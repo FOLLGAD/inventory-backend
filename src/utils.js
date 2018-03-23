@@ -27,4 +27,5 @@ export const ObjectTypes = {
 	'String': String,
 	'Date': Date,
 	'Boolean': Boolean,
+    'Link': String
 }
