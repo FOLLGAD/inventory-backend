@@ -131,7 +131,10 @@ router
                 if (!isBorrowed) {
                     Item
                         .findByIdAndUpdate(req.params.id, { $push: { borrows: { to: toDate, from: now, user: req.user } } }, (err, docs) => {
-                            if (err || !docs) return res.sendStatus(500);
+                            if (err || !docs) {
+                                console.error(err)
+                                return res.sendStatus(500);
+                            }
                             res.sendStatus(200);
                         });
                 } else {
