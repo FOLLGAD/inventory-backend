@@ -180,5 +180,13 @@ router
                 }
             })
     })
+    .patch('/:id', (req, res) => {
+        Item
+            .findByIdAndUpdate(req.params.id, req.body, (err, item) => {
+                if (!item || err) return res.sendStatus(404);
+
+                res.status(200).send(item)
+            })
+    })
 
 export default router;
