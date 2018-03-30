@@ -39,5 +39,13 @@ router
 				res.json(container);
 			});
 	})
+    .patch('/:id', (req, res) => {
+        Container
+            .findByIdAndUpdate(req.params.id, req.body, (err, container) => {
+                if (!container || err) return res.sendStatus(404);
+
+                res.status(200).send(container)
+            })
+    })
 
 export default router;
