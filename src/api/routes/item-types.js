@@ -38,5 +38,13 @@ router
 				res.json(itemType);
 			});
 	})
+    .patch('/:id', (req, res) => {
+        ItemType
+            .findByIdAndUpdate(req.params.id, req.body, (err, itemType) => {
+                if (!itemType || err) return res.sendStatus(404);
+
+                res.status(200).send(itemType)
+            })
+    })
 
 export default router;

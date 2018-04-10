@@ -32,5 +32,20 @@ router
 				res.status(400).send();
 			});
 	})
+	.delete('/:id', (req, res) => {
+		Container
+			.findByIdAndRemove(req.params.id, (err, container) => {
+				if (err || !container) return res.sendStatus(404);
+				res.json(container);
+			});
+	})
+    .patch('/:id', (req, res) => {
+        Container
+            .findByIdAndUpdate(req.params.id, req.body, (err, container) => {
+                if (!container || err) return res.sendStatus(404);
+
+                res.status(200).send(container)
+            })
+    })
 
 export default router;
