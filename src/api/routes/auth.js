@@ -22,8 +22,15 @@ router
         }
         let { username, password } = basicToCredentials(req.headers.authorization);
         getToken(username, password).then(token => {
-            res.status(200).json({ token });
-            User.create({ email: username })
+            User.findOne({ email: username }).exec()
+                .then(d => {
+                    if (d) {
+                        res.status(200).json(Object.assign({}, d, { token }));
+                    } else {
+                        User.create({ email: username })
+                        res.status(200).json(Object.assign({}, { token }));
+                    }
+                })
         }).catch(err => {
             res.status(401).send("Wrong credentials or failed to connect to auth service");
         });
