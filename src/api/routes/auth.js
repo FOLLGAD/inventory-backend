@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { getToken } from '../middleware';
 import { basicToCredentials } from '../../utils';
+import { User } from '../models';
 
 let router = new Router();
 
@@ -11,7 +12,7 @@ router
     */
     .get('/', (req, res) => {
         if (typeof req.headers.authorization != "string") {
-            res.status(401).json({
+            res.status(400).json({
                 error: {
                     code: "No token",
                     message: "You need a Authorization header with 'Basic' authorization",
@@ -22,8 +23,9 @@ router
         let { username, password } = basicToCredentials(req.headers.authorization);
         getToken(username, password).then(token => {
             res.status(200).json({ token });
+            User.create({ email: username })
         }).catch(err => {
-            res.status(400).send("Wrong credentials or failed to connect to auth service");
+            res.status(401).send("Wrong credentials or failed to connect to auth service");
         });
     })
 
