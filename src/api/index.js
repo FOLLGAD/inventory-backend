@@ -7,6 +7,7 @@ import itemTypes from './routes/item-types';
 import users from './routes/users';
 import me from './routes/me';
 import borrows from './routes/borrows';
+import endpoints from './routes/endpoints';
 
 export default app => {
     app.use('/v1/auth', auth);
@@ -16,4 +17,5 @@ export default app => {
     app.use('/v1/containers', containers);
     app.use('/v1/item-types', itemTypes);
     app.use('/v1/borrows', borrows);
+    app.use('/v1/endpoints', endpoints);
 }
