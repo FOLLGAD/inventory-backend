@@ -24,10 +24,10 @@ router
         getToken(username, password).then(token => {
             User.findOne({ email: username }).exec()
                 .then(d => {
-                    if (d) {
-                        res.status(200).json(Object.assign({}, d, { token }));
+                    if (d._doc) {
+                        res.status(200).json(Object.assign({}, d._doc, { token }));
                     } else {
-                        User.create({ email: username })
+                        User.create({ email: username });
                         res.status(200).json(Object.assign({}, { token }));
                     }
                 })

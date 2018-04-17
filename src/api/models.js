@@ -81,7 +81,7 @@ export const Borrow = mongoose.model('borrow', borrowSchema);
 const nameSchema = new Schema({
 	first: String,
 	last: String,
-});
+}, { _id: false, id: false });
 const userSchema = new Schema({
 	email: { type: String, unique: true, required: true },
 	name: nameSchema,
