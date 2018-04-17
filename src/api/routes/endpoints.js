@@ -6,7 +6,6 @@ import { sharepointUrl } from '../../consts'
 let router = new Router();
 
 router
-	.use(verifyToken) // Require user to send a valid token in order to proceed
 	.get('/auth-url', (req, res) => {
 		res.json({ authUrl: sharepointUrl })
 	})
