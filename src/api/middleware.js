@@ -30,6 +30,18 @@ export function verifyToken(req, res, next) {
     }
 }
 
+if (process.env.NODE_ENV == "development") {
+    User
+        .findOne({ email: "demo@demo.com" })
+        .exec()
+        .then(user => {
+            if (user == null) {
+                User.create({ email: "demo@demo.com", lastActive: new Date() })
+            }
+        })
+        .catch(console.error)
+}
+
 /*
     Takes username and password and returns a JWT token to be sent in the "token" header in subsequent requests.
 */
@@ -39,6 +51,13 @@ export function getToken(username, password) {
             rej('Username and password needed');
             return;
         }
+
+        if (process.env.NODE_ENV == "development") {
+            if (username == "demo@demo.com" && password == "demo") {
+                return res(jwt.sign(username, tokenSecret))
+            }
+        }
+
         // spauth.getAuth() returns a cookie, which can then be used to auth further Sharepoint-requests.
         spauth.getAuth(sharepointUrl, {
             username,
