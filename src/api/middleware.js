@@ -30,18 +30,6 @@ export function verifyToken(req, res, next) {
     }
 }
 
-if (process.env.NODE_ENV == "development") {
-    User
-        .findOne({ email: "demo@demo.com" })
-        .exec()
-        .then(user => {
-            if (user == null) {
-                User.create({ email: "demo@demo.com", lastActive: new Date() })
-            }
-        })
-        .catch(console.error)
-}
-
 /*
     Takes username and password and returns a JWT token to be sent in the "token" header in subsequent requests.
 */
@@ -52,9 +40,11 @@ export function getToken(username, password) {
             return;
         }
 
-        if (process.env.NODE_ENV == "development") {
-            if (username == "demo@demo.com" && password == "demo") {
+        if (username == "demo@demo.com" && password == "demo") {
+            if (process.env.NODE_ENV == "development") {
                 return res(jwt.sign(username, tokenSecret))
+            } else {
+                console.info("User tried logging in with demo credentials, but NODE_ENV is not 'development")
             }
         }
 

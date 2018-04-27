@@ -26,7 +26,7 @@ router
         getToken(username, password).then(token => {
             User.findOne({ email: username }).exec()
                 .then(d => {
-                    if (d._doc) {
+                    if (d && d._doc) {
                         res.status(200).json(Object.assign({}, d._doc, { token }));
                     } else {
                         User.create({ email: username });
@@ -47,14 +47,14 @@ router
             username,
             password,
         })
-        .then(resp => {
-            console.log(resp)
-            res.sendStatus(200)
-        })
-        .catch(resp => {
-            console.log(resp)
-            res.sendStatus(400)
-        })
+            .then(resp => {
+                console.log(resp)
+                res.sendStatus(200)
+            })
+            .catch(resp => {
+                console.log(resp)
+                res.sendStatus(400)
+            })
     })
 
 export default router;

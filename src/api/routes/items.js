@@ -162,7 +162,6 @@ router
                 });
     })
     .post('/', (req, res) => {
-        console.log(req.body)
         if (!req.body.code) req.body.code = (Math.random() * 10000000000).toFixed(0).toString() //Remove later plox
         Item
             .create(req.body, (err, item) => {
